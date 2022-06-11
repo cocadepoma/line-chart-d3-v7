@@ -226,7 +226,7 @@ export const Line = ({ data }) => {
     yLabel.text(newText)
 
 
-    // ZOOM //
+    /******************************** Zoom Code ********************************/
     const zoom = d3.zoom()
       .scaleExtent([1, Infinity])
       .translateExtent([[0, 0], [WIDTH, HEIGHT]])
@@ -248,6 +248,7 @@ export const Line = ({ data }) => {
     // .transition()
     // .duration(100)
     // .call(zoom.scaleTo, 1, [x(Date.UTC(2012, 1, 1)), 0]);
+    /******************************** Zoom Code ********************************/
   };
 
   const onSelectChange = (e) => {
