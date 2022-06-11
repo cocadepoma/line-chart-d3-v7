@@ -11,3 +11,72 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#chart-area svg {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+#logo {
+  height: 50px;
+}
+
+.navbar-brand {
+  height: 60px;
+  padding: 5px 0px;
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #11507086;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: #f1f3f391;
+  stroke: #777;
+  stroke-width: 1px;
+}
+
+.hover-line {
+  stroke: rgb(237, 199, 174);
+  stroke-width: 1px;
+  stroke-dasharray: 3, 3;
+}
+
+#selections .col-md-4 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.line {
+  fill: none;
+  stroke-width: 1px;
+  stroke: rgb(53, 79, 98);
+}
+
+.tick {
+  font-size: 7px;
+}
+
+.x-axisLabel,
+.y-axisLabel {
+  font-size: 12px;
+}
+
+.hover-text {
+  font-size: 12px;
+  fill: rgb(53, 79, 98);
+}

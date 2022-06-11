@@ -1,22 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import * as d3 from "d3";
+import { useEffect, useState } from "react";
+import { Line } from './Line';
 
 function App() {
+  const [parsedData, setParsedData] = useState(null);
+
+  useEffect(() => {
+    d3.json("./data/coins.json").then(data => {
+      setParsedData(data);
+    })
+    return () => undefined;
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>D3 Line</h1>
+        {parsedData && <Line data={parsedData} />}
       </header>
     </div>
   );
