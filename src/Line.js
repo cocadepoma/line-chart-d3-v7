@@ -7,18 +7,22 @@ export const Line = ({ data }) => {
   const [parsedData, setParsedData] = useState({});
   const [formData, setFormData] = useState({
     coin: 'bitcoin',
-    var: 'price_usd'
+    var: 'price_usd',
+    minDate: new Date().toISOString().slice(0, 10),
+    maxDate: new Date().toISOString().slice(0, 10)
   });
+
+  const [availableDates, setAvailableDates] = useState({});
 
   const parseTime = d3.timeParse("%d/%m/%Y");
   const formatDate = d3.timeFormat("%d-%b");
 
   useEffect(() => {
     if (!data) return;
+    const dataCopy = JSON.parse(JSON.stringify(data));
     // time parser for x-scale
-
-    Object.keys(data).forEach(id => {
-      data[id] = data[id]
+    Object.keys(dataCopy).forEach(id => {
+      dataCopy[id] = dataCopy[id]
         .filter(d => (d['24h_vol'] && d['market_cap'] && d['price_usd'] && d['date']))
         .map(d => {
           d['24h_vol'] = Number(d['24h_vol']);
@@ -28,15 +32,34 @@ export const Line = ({ data }) => {
           return d
         })
     });
-    setParsedData(data);
+
+    setParsedData(dataCopy);
+    getAvailableDates(dataCopy);
   }, [data]);
 
   useLayoutEffect(() => {
     if (!Object.keys(parsedData).length) return;
-
     createGraph();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [parsedData, formData]);
+
+  const getAvailableDates = (data) => {
+    const dates = {};
+    Object.keys(data).forEach(coin => {
+      dates[coin] = data[coin].map(d => d['date']);
+    })
+
+
+    setAvailableDates(dates);
+
+    console.log(dates[formData.coin].at(0))
+    setFormData({
+      ...formData,
+      ...(dates[formData.coin].at(0) && { minDate: new Date(dates[formData.coin].at(0)).toISOString().slice(0, 10) }),
+      ...(dates[formData.coin].at(0) && { maxDate: new Date(dates[formData.coin].at(-1)).toISOString().slice(0, 10) })
+    })
+  };
 
   // fix for format values
   const formatSi = d3.format(".2s")
@@ -136,6 +159,9 @@ export const Line = ({ data }) => {
         .attr("class", "y-axis")
 
     const dataTimeFiltered = parsedData[formData.coin]
+      .filter(d =>
+        new Date(d['date']).getTime() >= new Date(formData.minDate)
+        && new Date(d['date']) <= new Date(formData.maxDate))
 
     // update scales
     x.domain(d3.extent(dataTimeFiltered, d => d.date))
@@ -251,8 +277,24 @@ export const Line = ({ data }) => {
     /******************************** Zoom Code ********************************/
   };
 
-  const onSelectChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+  const onSelectChange = ({ target }) => {
+    const coinToSet = target.name === "coin"
+      ? target.value
+      : formData.coin;
+
+    setFormData({
+      ...formData,
+      [target.name]: target.value,
+      minDate: new Date(availableDates[coinToSet].at(0)).toISOString().slice(0, 10),
+      maxDate: new Date(availableDates[coinToSet].at(-1)).toISOString().slice(0, 10)
+    });
+  };
+
+  const onDateChange = ({ target }) => {
+    setFormData({
+      ...formData,
+      [target.name]: new Date(target.value).toISOString().slice(0, 10),
+    });
   };
 
   return (
@@ -281,6 +323,52 @@ export const Line = ({ data }) => {
         <option value="market_cap">Market capitalization</option>
         <option value="24h_vol">24 hour trading volume</option>
       </select>
+
+      <br />
+      {
+        availableDates[formData.coin]?.length > 0 && (
+
+          <div style={{
+            display: "flex",
+            gap: '2rem'
+          }}>
+            <div style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: '1rem'
+            }}>
+              <p>From: </p>
+              <input
+                value={formData.minDate}
+                type="date"
+                name="minDate"
+                min={new Date(availableDates[formData.coin].at(0)).toISOString().slice(0, 10)}
+                max={formData.maxDate}
+                onChange={onDateChange}
+              />
+            </div>
+
+            <div style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: '1rem'
+            }}>
+              <p>To: </p>
+              <input
+                value={formData.maxDate}
+                type="date"
+                name="maxDate"
+                min={formData.minDate}
+                max={new Date(availableDates[formData.coin].at(-1)).toISOString().slice(0, 10)}
+                onChange={onDateChange}
+              />
+            </div>
+          </div>
+        )
+      }
+      <br />
 
       <div id="chart-area">
         <svg id="svg-area">
