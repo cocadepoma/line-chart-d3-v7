@@ -82,7 +82,6 @@ export const loadTooltip = ({
     .on("mousemove", mousemove)
 
   function mousemove(event) {
-    console.log(event)
     const currentZoom = d3.zoomTransform(this)
     const zoomedX = currentZoom.rescaleX(x)
     const zoomedY = currentZoom.rescaleY(y)

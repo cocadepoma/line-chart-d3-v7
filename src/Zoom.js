@@ -6,15 +6,12 @@ export const loadZoom = ({ SIZE, path, x, y, xAxis, yAxis, line, data, xAxisCall
     .translateExtent([[0, 0], [SIZE.width, SIZE.height]])
     .extent([[0, 0], [SIZE.width, SIZE.height]])
     .on("start", startZoom)
-    .on("zoom", zoomed)
-    .on("end", endZoom);
+    .on("zoom", zoomed);
 
   function startZoom() {
-    d3.select('.focus').style("display", "none")
-  };
-
-  function endZoom() {
-    d3.select('.focus').style("display", null)
+    d3.select('.focus')
+      .style("opacity", 0)
+      .attr("transform", `translate(${SIZE.width / 2}, ${SIZE.height + 100})`)
   };
 
   function zoomed({ transform }) {
@@ -22,7 +19,6 @@ export const loadZoom = ({ SIZE, path, x, y, xAxis, yAxis, line, data, xAxisCall
     const newY = transform.rescaleY(y);
 
     path.attr("d", d => line(data, newX, newY));
-
     xAxis.call(xAxisCall.scale(newX))
     yAxis.call(yAxisCall.scale(newY))
   };
