@@ -29,7 +29,7 @@ export const FormSelectors = ({
       ...formData,
       [target.name]: new Date(target.value).toISOString().slice(0, 10),
     });
-    updateData();
+    updateData(target);
   };
 
   const changeLabelText = (value) => {

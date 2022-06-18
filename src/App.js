@@ -81,12 +81,15 @@ function App() {
     })
   };
 
-  const updateData = () => {
+  const updateData = ({ name, value }) => {
     const coinData = data[formData.coin];
+    const minDateToFilter = name === 'minDate' ? value : formData.minDate;
+    const maxDateToFilter = name === 'maxDate' ? value : formData.maxDate;
+
     const dataTimeFiltered = coinData
       .filter(d =>
-        new Date(d['date']).getTime() >= new Date(formData.minDate)
-        && new Date(d['date']) <= new Date(formData.maxDate));
+        new Date(d['date']).getTime() >= new Date(minDateToFilter).getTime()
+        && new Date(d['date']).getTime() <= new Date(maxDateToFilter).getTime());
 
     setParsedData({
       ...parsedData,
