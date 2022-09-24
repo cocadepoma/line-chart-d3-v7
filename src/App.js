@@ -18,7 +18,6 @@ const options = {
   xDateScale: true,
 };
 
-// const parseTime = d3.timeParse("%Y");
 const parseTime = d3.timeParse("%d/%m/%Y");
 
 function App() {
@@ -33,36 +32,32 @@ function App() {
 
   const [availableDates, setAvailableDates] = useState({});
   useEffect(() => {
-    // d3.json("./data/example.json").then(data => {
+    d3.json("./data/coins.json",
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }).then(data => {
+        if (!data) return;
+        const dataCopy = JSON.parse(JSON.stringify(data));
 
-    d3.json("./data/coins.json").then(data => {
-      if (!data) return;
-      const dataCopy = JSON.parse(JSON.stringify(data));
+        Object.keys(dataCopy).forEach(id => {
+          dataCopy[id] = dataCopy[id]
+            .filter(d => (d['24h_vol'] && d['market_cap'] && d['price_usd'] && d['date']))
+            .map(d => {
+              d['24h_vol'] = Number(d['24h_vol']);
+              d['market_cap'] = Number(d['market_cap']);
+              d['price_usd'] = Number(d['price_usd']);
+              d['date'] = parseTime(d['date']);
+              return d
+            })
+        });
 
-      Object.keys(dataCopy).forEach(id => {
-        dataCopy[id] = dataCopy[id]
-          .filter(d => (d['24h_vol'] && d['market_cap'] && d['price_usd'] && d['date']))
-          .map(d => {
-            d['24h_vol'] = Number(d['24h_vol']);
-            d['market_cap'] = Number(d['market_cap']);
-            d['price_usd'] = Number(d['price_usd']);
-            d['date'] = parseTime(d['date']);
-            return d
-          })
+        setData(dataCopy);
+        setParsedData(dataCopy);
+        getAvailableDates(dataCopy);
       });
-
-      setData(dataCopy);
-      setParsedData(dataCopy);
-      getAvailableDates(dataCopy);
-
-      // dataCopy.map(row => {
-      //   row.year = Number(row.year);
-      //   row.value = Number(row.value);
-      // })
-
-      // setData(dataCopy);
-      // setParsedData(dataCopy);
-    })
     return () => undefined;
   }, []);
 
