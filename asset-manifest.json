@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/line-chart-d3-v7/static/css/main.00784ea4.css",
-    "main.js": "/line-chart-d3-v7/static/js/main.dc2c96ea.js",
+    "main.js": "/line-chart-d3-v7/static/js/main.60b6fb74.js",
     "index.html": "/line-chart-d3-v7/index.html",
     "main.00784ea4.css.map": "/line-chart-d3-v7/static/css/main.00784ea4.css.map",
-    "main.dc2c96ea.js.map": "/line-chart-d3-v7/static/js/main.dc2c96ea.js.map"
+    "main.60b6fb74.js.map": "/line-chart-d3-v7/static/js/main.60b6fb74.js.map"
   },
   "entrypoints": [
     "static/css/main.00784ea4.css",
-    "static/js/main.dc2c96ea.js"
+    "static/js/main.60b6fb74.js"
   ]
 }
