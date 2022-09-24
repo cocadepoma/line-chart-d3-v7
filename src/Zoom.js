@@ -6,10 +6,11 @@ export const loadZoom = ({ SIZE, path, x, y, xAxis, yAxis, line, data, xAxisCall
     .translateExtent([[0, 0], [SIZE.width, SIZE.height]])
     .extent([[0, 0], [SIZE.width, SIZE.height]])
     .on("start", startZoom)
-    .on("zoom", zoomed);
+    .on("zoom", zoomed)
+    .on("end", endZoom);
 
   function startZoom() {
-    d3.select('.focus')
+    d3.select('.focus-svg')
       .style("opacity", 0)
       .attr("transform", `translate(${SIZE.width / 2}, ${SIZE.height + 100})`)
   };
@@ -21,6 +22,13 @@ export const loadZoom = ({ SIZE, path, x, y, xAxis, yAxis, line, data, xAxisCall
     path.attr("d", d => line(data, newX, newY));
     xAxis.call(xAxisCall.scale(newX))
     yAxis.call(yAxisCall.scale(newY))
+  };
+
+  function endZoom() {
+    setTimeout(() => {
+      d3.select('.focus-svg')
+        .style("opacity", 1)
+    }, 300);
   };
 
   d3.select('.overlay').call(zoom);

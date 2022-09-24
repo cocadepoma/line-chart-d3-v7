@@ -13,6 +13,7 @@ const options = {
   tooltipTextPositions: { xAxis: { x: -53, y: -35 }, yAxis: { x: -53, y: -19 } },
   tooltipTextsLabels: { xBefore: "Date: ", xAfter: "", yBefore: "Value:  ", yAfter: " ($)" },
   lineClass: "line2",
+  lineColor: 'red',
   zoomEnabled: true,
   tooltipEnabled: true,
   xDateScale: true,
@@ -94,9 +95,9 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>D3 Line</h1>
+      <h1>D3 Line</h1>
 
+      <header className="App-header">
         <FormSelectors
           updateData={updateData}
           options={options}
@@ -115,6 +116,7 @@ function App() {
           setFormData={setFormData}
           xKey="date"
           yKey={formData.var}
+          id="svg-area"
 
         // xKey="year"
         // yKey={"value"}

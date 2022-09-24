@@ -81,7 +81,7 @@ export const Line = ({ data, options, xKey, yKey }) => {
   };
 
   const cleanTooltip = () => {
-    d3.select(".focus").remove()
+    d3.select(".focus-svg").remove()
     d3.select(".overlay").remove()
   };
 
@@ -112,12 +112,14 @@ export const Line = ({ data, options, xKey, yKey }) => {
     const t = d3.transition().duration(1000);
 
     //*******  SVG + LINE  *********//
-    // add svg are to draw the line
-    const svgPath = g.append("svg")
-      .attr("class", "line-svg")
-      .style("overflow", "hidden")
-      .attr("width", SIZE.width)
-      .attr("height", SIZE.height);
+    // add svg area to draw the line
+    const svgPath = d3.select('.line-svg').node()
+      ? d3.select('.line-svg')
+      : g.append("svg")
+        .attr("class", "line-svg")
+        .style("overflow", "hidden")
+        .attr("width", SIZE.width)
+        .attr("height", SIZE.height);
 
     // add line to svg area
     const path = d3.select('.line').node()
@@ -149,8 +151,8 @@ export const Line = ({ data, options, xKey, yKey }) => {
       .attr("font-size", "20px")
       .attr("text-anchor", "middle")
       .text(LABELS_TEXT.yAxis)
-    //*******  LABELS *********//
 
+    //*******  LABELS *********//
     // scales
     const x = xDateScale
       ? d3.scaleTime().range([0, SIZE.width])
