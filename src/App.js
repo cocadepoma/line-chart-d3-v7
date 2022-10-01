@@ -5,8 +5,8 @@ import { Line } from './Line';
 
 const options = {
   margin: { left: 100, right: 100, top: 50, bottom: 100 },
-  size: { width: 1000, height: 400 },
-  labelsPositions: { xAxis: { x: 0, y: -10 }, yAxis: { x: 10, y: 20 } },
+  size: { width: 800, height: 300 },
+  labelsPositions: { xAxis: { x: 0, y: -10 }, yAxis: { x: 60, y: 20 } },
   labelsText: { xAxis: "year", yAxis: "value ($)" },
   labelsClasses: { xAxis: "x-axisLabel", yAxis: "y-axisLabel" },
   tooltipContainer: { width: 120, height: 40, x: -60, y: -50 },
@@ -14,7 +14,7 @@ const options = {
   tooltipTextsLabels: { xBefore: "Date: ", xAfter: "", yBefore: "Value:  ", yAfter: " ($)" },
   lineClass: "line2",
   lineColor: 'red',
-  zoomEnabled: true,
+  isZoomEnabled: true,
   tooltipEnabled: true,
   xDateScale: true,
 };
@@ -32,6 +32,9 @@ function App() {
   });
 
   const [availableDates, setAvailableDates] = useState({});
+  const [isZoomFreeModeEnabled, setIsZoomFreeModeEnabled] = useState(false);
+  const [isZoomEnabled, setIsZoomEnabled] = useState(false);
+
   useEffect(() => {
     d3.json("./data/coins.json",
       {
@@ -105,24 +108,36 @@ function App() {
           setFormData={setFormData}
           availableDates={availableDates}
         />
-        {/* <div style={{
-          maxWidth: '60rem'
-        }}> */}
-        {parsedData && <Line
-          data={parsedData[formData.coin]}
-          options={options}
-          availableDates={availableDates}
-          formData={formData}
-          setFormData={setFormData}
-          xKey="date"
-          yKey={formData.var}
-          id="svg-area"
+        <div style={{display: 'flex', justifyContent: 'space-evenly', marginTop: '2rem'}}>
+          <div>
+            <label style={{color: '#fff', marginRight: '2rem'}}>Zoom: </label>
+            <button onClick={()=>setIsZoomEnabled(!isZoomEnabled)} style={{}}>{isZoomEnabled ? 'On': 'Off' }</button>
+          </div>
 
-        // xKey="year"
-        // yKey={"value"}
-        />
+          {isZoomEnabled && (
+            <div>
+              <label style={{color: '#fff', marginRight: '2rem'}}>Zoom Free Mode: </label>
+              <button onClick={()=>setIsZoomFreeModeEnabled(!isZoomFreeModeEnabled)} style={{}}>{isZoomFreeModeEnabled ? 'On': 'Off' }</button>
+            </div>
+          )}
+        </div>
+
+        {parsedData && 
+          <Line
+            data={parsedData[formData.coin]}
+            options={{
+              ...options,
+              isZoomEnabled,
+              isZoomFreeModeEnabled,
+            }}
+            availableDates={availableDates}
+            formData={formData}
+            setFormData={setFormData}
+            xKey="date"
+            yKey={formData.var}
+            id="svg-area"
+          />
         }
-        {/* </div> */}
       </header>
     </div>
   );

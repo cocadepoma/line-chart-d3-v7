@@ -58,8 +58,10 @@ h1 {
     grid-template-columns: 8rem 12rem;
     grid-template-rows: 1fr
   }
+}
 
-  .form__select--container label {}
+text {
+  user-select: none;
 }
 
 #chart-area svg {
@@ -94,10 +96,10 @@ h1 {
   pointer-events: all;
 }
 
-.focus circle {
+.tooltip-overlay circle {
   fill: #f1f3f391;
-  stroke: #777;
-  stroke-width: 1px;
+  /* stroke: #777;
+  stroke-width: 1px; */
 }
 
 .hover-line {
