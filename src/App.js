@@ -15,7 +15,7 @@ const options = {
   lineClass: "line2",
   lineColor: 'red',
   isZoomEnabled: true,
-  tooltipEnabled: true,
+  isTooltipEnabled: true,
   xDateScale: true,
 };
 

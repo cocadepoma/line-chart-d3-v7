@@ -96,10 +96,10 @@ text {
   pointer-events: all;
 }
 
-.tooltip-overlay circle {
+.circle-focus{
   fill: #f1f3f391;
-  /* stroke: #777;
-  stroke-width: 1px; */
+  stroke: #777;
+  stroke-width: 1px;
 }
 
 .hover-line {

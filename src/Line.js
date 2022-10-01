@@ -13,7 +13,7 @@ export const Line = ({ data, options, xKey, yKey }) => {
     labelsPositions,
     labelsText,
     labelsClasses,
-    tooltipEnabled,
+    isTooltipEnabled,
     isZoomEnabled,
     isZoomFreeModeEnabled,
     xDateScale,
@@ -92,7 +92,9 @@ export const Line = ({ data, options, xKey, yKey }) => {
   const cleanTooltip = () => {
     d3.select(".focus-svg").remove()
     d3.select(".zoom-overlay").remove()
-    d3.select(".tooltip-overlay").remove()
+
+    d3.select(".circle-focus-container").remove()
+    d3.select(".brush").remove()
   };
 
   const cleanLabels = () => {
@@ -129,7 +131,8 @@ export const Line = ({ data, options, xKey, yKey }) => {
       : svg.append("g")
         .attr("id", "g-area")
         .attr("transform", `translate(${MARGIN.left}, ${MARGIN.top})`)
-
+        .attr("width", SIZE.width)
+        .attr("height", SIZE.height);
     const t = d3.transition().duration(1000);
 
     //*******  SVG + LINE  *********//
@@ -215,132 +218,13 @@ export const Line = ({ data, options, xKey, yKey }) => {
 
     /******************************** Zoom Code ********************************/
     if (isZoomEnabled) {
-      if (isZoomFreeModeEnabled) {
-        loadZoom({ SIZE, path, x, y, xAxis, yAxis, line, data, xAxisCall, yAxisCall });
-      } else {
-        loadBrush({ data, SIZE, x, y, xKey, yKey, xAxis, yAxis, yAxisCall, path, line, g });
-      }
+      isZoomFreeModeEnabled
+      ? loadZoom({ SIZE, path, x, y, xAxis, yAxis, line, data, xAxisCall, yAxisCall,  })
+      : loadBrush({ data, SIZE, x, y, xKey, yKey, xAxis, yAxis, yAxisCall, path, line, g, isTooltipEnabled});
     }
 
     /******************************** Tooltip Code ********************************/
-    loadTooltip({
-      SIZE,
-      xKey,
-      yKey,
-      data,
-      x,
-      y,
-      tooltipEnabled,
-      tooltipContainer,
-      tooltipTextPositions,
-      tooltipTextsLabels,
-      path, xAxis, yAxis, line, xAxisCall, yAxisCall
-    });
-
-    // const focusSvg = d3.select('.tooltip-overlay').node()
-    //   ? d3.select('.tooltip-overlay')
-    //   : g.append("rect")
-    //     .attr("class", "tooltip-overlay")
-    //     .attr("width", SIZE.width)
-    //     .attr("height", SIZE.height)
-    //     .style("fill", "transparent")
-    //     .on("mouseover", mousemove)
-    //     .on("mouseout", () => {
-    //       focusSvg.transition().duration(20).style("opacity", 0)
-    //     })
-    //     .on("mousemove", mousemove)
-
-    // focusSvg.append("circle")
-    //   .attr("r", 3.5)
-
-    // function mousemove(event) {
-    //   console.log(event)
-    //   const bisectDate = d3.bisector(d => d[xKey]).left
-
-    //   const currentZoom = d3.zoomTransform(this)
-    //   const zoomedX = currentZoom.rescaleX(x)
-    //   const zoomedY = currentZoom.rescaleY(y)
-
-    //   const x0 = zoomedX.invert(d3.pointer(event, this)[0])
-    //   const i = bisectDate(data, x0, 1)
-    //   const d0 = i !== data.length ? data[i - 1] : data[i - 2]
-    //   const d1 = i !== data.length ? data[i] : data[i - 1]
-
-    //   const d = x0 - d0[xKey] > d1[xKey] - x0 ? d1 : d0;
-
-    //   const xPoint = zoomedX(d[xKey]);
-    //   const yPoint = zoomedY(d[yKey]);
-
-    //   focusSvg.transition()
-    //     .duration(30)
-    //     .style("opacity", 1)
-    //     .attr("transform", `translate(${xPoint}, ${yPoint})`)
-    //   focusSvg.select(".tooltip-text-x").text(tooltipTextsLabels.yBefore + d[yKey] + tooltipTextsLabels.yAfter);
-    //   focusSvg.select(".tooltip-text-y").text('Date: ' + new Date(d[xKey]).toLocaleDateString());
-    //   focusSvg.select(".x-hover-line").attr("y2", SIZE.height - yPoint)
-    //   focusSvg.select(".y-hover-line").attr("x2", -xPoint)
-    // }
-
-
-
-
-    // const focusSvg = d3.select('.focus-svg').node()
-    //   ? d3.select('.focus-svg')
-    //   : g.append("g")
-    //     .attr("class", "focus-svg")
-    //     .style("overflow", "hidden")
-    //     .attr("width", SIZE.width + 150)
-    //     .attr("height", SIZE.height)
-    //     .append("g")
-    //     .attr("class", "focus")
-
-
-
-
-    // focusSvg.append("rect")
-    //   .attr("class", "tooltip")
-    //   .attr("width", SIZE.width)
-    //   .attr("height", SIZE.height)
-    //   .style("fill", "transparent")
-    //   .on("mouseover", mousemove)
-    //   .on("mouseout", () => {
-    //     focusSvg.transition().duration(20).style("opacity", 0)
-    //   })
-    //   .on("mousemove", mousemove)
-
-    // focusSvg.append("circle")
-    //   .attr("r", 3.5)
-    //   .attr("class", "focus")
-
-    // const bisectDate = d3.bisector(d => d[xKey]).left
-
-    // function mousemove(event) {
-    //   console.log(event)
-    //   const currentZoom = d3.zoomTransform(this)
-    //   const zoomedX = currentZoom.rescaleX(x)
-    //   const zoomedY = currentZoom.rescaleY(y)
-
-    //   const x0 = zoomedX.invert(d3.pointer(event, this)[0])
-    //   const i = bisectDate(data, x0, 1)
-    //   const d0 = i !== data.length ? data[i - 1] : data[i - 2]
-    //   const d1 = i !== data.length ? data[i] : data[i - 1]
-
-    //   const d = x0 - d0[xKey] > d1[xKey] - x0 ? d1 : d0;
-
-    //   const xPoint = zoomedX(d[xKey]);
-    //   const yPoint = zoomedY(d[yKey]);
-
-    //   focusSvg.transition()
-    //     .duration(30)
-    //     .style("opacity", 1)
-    //     .attr("transform", `translate(${xPoint}, ${yPoint})`);
-
-    //   focusSvg.select(".tooltip-text-x").text(tooltipTextsLabels.yBefore + d[yKey] + tooltipTextsLabels.yAfter);
-    //   focusSvg.select(".tooltip-text-y").text('Date: ' + new Date(d[xKey]).toLocaleDateString());
-    //   focusSvg.select(".x-hover-line").attr("y2", SIZE.height - yPoint)
-    //   focusSvg.select(".y-hover-line").attr("x2", -xPoint)
-    // }
-
+    
     // Update line path
     g.select(".line")
       .transition(t)

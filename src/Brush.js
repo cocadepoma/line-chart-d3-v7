@@ -1,22 +1,41 @@
 import * as d3 from "d3";
 
-export const loadBrush = ({ data, SIZE, x, y, xKey, yKey, xAxis, yAxis, yAxisCall, path, line }) => {
+export const loadBrush = ({
+  data,
+  SIZE,
+  x,
+  y,
+  xKey,
+  yKey,
+  xAxis,
+  yAxis,
+  yAxisCall,
+  path,
+  line,
+  isTooltipEnabled,
+}) => {
   const g = d3.select("#g-area");
 
   const brush = d3.brush()
     .extent([[0, 0], [SIZE.width, SIZE.height]])
     .on("end", updateChart)
+    .on("start", cleanCircle);
 
   const brushElement = d3.select('.brush').node()
     ? d3.select('.brush')
     : g.append("g")
       .attr("class", "brush")
-      .call(brush);
+      .call(brush)
+      .on("mousemove", isTooltipEnabled && mousemove)
+      .on("mouseover", isTooltipEnabled && mousemove)
+      .on("mouseout", isTooltipEnabled && cleanCircle)
+      .on("click", click);
 
   let idleTimeout
   function idled() { idleTimeout = null; }
 
   function updateChart(event) {
+    cleanCircle();
     const extent = event.selection;
 
     if (!extent) {
@@ -41,5 +60,57 @@ export const loadBrush = ({ data, SIZE, x, y, xKey, yKey, xAxis, yAxis, yAxisCal
       .transition()
       .duration(1000)
       .attr("d", d => line(data, x, y));
+  }
+
+  function mousemove(event) {
+    showCircle();
+    const bisectDate = d3.bisector(d => d[xKey]).left;
+
+    const pepe = d3.select('.circle-focus-container').node()
+      ? d3.select('.circle-focus-container')
+      : g.append("g")
+        .style("overflow", "hidden")
+        .attr("class", "circle-focus-container")
+        .attr("width", SIZE.width + 150)
+        .attr("height", SIZE.height)
+        
+    !d3.select('.circle-focus').node() &&(
+      pepe.append("circle")
+        .attr("r", 3.5)
+        .attr("class", "circle-focus")
+    )
+    const currentZoom = d3.zoomTransform(this)
+    const zoomedX = currentZoom.rescaleX(x)
+    const zoomedY = currentZoom.rescaleY(y)
+
+    const x0 = zoomedX.invert(d3.pointer(event, this)[0])
+    const i = bisectDate(data, x0, 1)
+    const d0 = i !== data.length ? data[i - 1] : data[i - 2]
+    const d1 = i !== data.length ? data[i] : data[i - 1]
+
+    const d = x0 - d0[xKey] > d1[xKey] - x0 ? d1 : d0;
+
+    const xPoint = zoomedX(d[xKey]);
+    const yPoint = zoomedY(d[yKey]);
+
+    d3.select('.circle-focus-container')
+      .transition()
+      .duration(50)
+      .style("opacity", 1)
+      .attr("transform", `translate(${xPoint}, ${yPoint})`)
+  }
+
+  function click(event) {
+    console.log(event);
+  }
+
+  function cleanCircle() {
+    d3.select('.circle-focus-container')
+      .style("opacity", 0)
+  }
+
+  function showCircle() {
+    d3.select('.circle-focus-container')
+      .style("opacity", 1)
   }
 }

@@ -8,7 +8,7 @@ export const loadZoom = ({ SIZE, path, x, y, xAxis, yAxis, line, data, xAxisCall
     .attr("width", SIZE.width)
     .attr("height", SIZE.height)
     .style("fill", "transparent")
-    .style('cursor', 'grab')
+    .style('cursor', 'move')
 
   const zoom = d3.zoom()
     .scaleExtent([1, Infinity])
